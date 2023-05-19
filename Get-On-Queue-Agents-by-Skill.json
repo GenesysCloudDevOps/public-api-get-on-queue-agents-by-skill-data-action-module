@@ -1,0 +1,63 @@
+{
+  "name": "Get On Queue Agents by Skill",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/routing/queues/${input.QUEUE_ID}/members?skills=$esc.url(${input.SKILL})&routingStatus=${input.ROUTING_STATUS}&joined=true",
+      "requestType": "GET",
+      "headers": {
+        "UserAgent": "PureCloudIntegrations/1.0",
+        "Content-Type": "application/json"
+      },
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {
+        "iAgents": "$.entities.size()"
+      },
+      "translationMapDefaults": {},
+      "successTemplate": "{\n   \"iAgents\": ${iAgents}\n}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": ["QUEUE_ID", "ROUTING_STATUS", "SKILL"],
+        "properties": {
+          "QUEUE_ID": {
+            "description": "Queue ID",
+            "type": "string"
+          },
+          "ROUTING_STATUS": {
+            "description": "Routing status",
+            "type": "string"
+          },
+          "SKILL": {
+            "description": "Skill names",
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Response",
+        "description": "Response",
+        "type": "object",
+        "properties": {
+          "iAgents": {
+            "description": "Count of agents up to 25",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}
